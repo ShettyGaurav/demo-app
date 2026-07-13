@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+  name: tark-worker
+  namespace: gaurav
+  labels:
+    app: task-worker
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: task-worker
+  template:
+    metadata:
+      labels:
+        app: task-worker
+    spec:
+      containers:
+        - name: task-worker 
+          image: registry.access.redhat.com/ubi9/python-311:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          command: ["sleep", "infinity"]
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"

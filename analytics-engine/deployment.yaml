@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analytics-engine
+  namespace: gaurav
+  labels:
+    app: analytics-engine
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: analytics-engine
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: analytics-engine
+        tier: backend
+    spec:
+      containers:
+        - name: analytics-engine
+          image: image-registry.openshift-image-registry.svc:5000/gaurav/analytics-engine:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PORT
+              value: "8080"
+            - name: DB_PATH
+              value: "/opt/app-root/src/data/analytics.db"
+          volumeMounts:
+            - name: analytics-engine-data
+              mountPath: /opt/app-root/src/data
+      volumes:
+        - name: analytics-engine-data
+          persistentVolumeClaim:
+            claimName: analytics-engine-data
